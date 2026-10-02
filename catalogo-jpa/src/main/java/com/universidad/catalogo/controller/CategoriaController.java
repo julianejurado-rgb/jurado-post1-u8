@@ -39,7 +39,15 @@ public class CategoriaController {
                 ? "Nueva Categoría" : "Editar Categoría");
             return "categorias/formulario";
         }
-        service.guardar(categoria);
+        try {
+            service.guardar(categoria);
+        } catch (IllegalStateException e) {
+            // Nombre duplicado: se muestra el mensaje del servicio en el formulario
+            result.rejectValue("nombre", "duplicado", e.getMessage());
+            model.addAttribute("titulo", categoria.getId() == null
+                ? "Nueva Categoría" : "Editar Categoría");
+            return "categorias/formulario";
+        }
         return "redirect:/categorias";
     }
 
